@@ -8,7 +8,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/koorchik/node-mole-rpc-transport-mqtt.git"
+        "url": "git+https://github.com/koorchik/node-mole-rpc-transport-ws.git"
     },
     "peerDependencies": {
         "mole-rpc": "^0.3.0"
@@ -36,7 +36,7 @@
     "author": "koorchik",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/koorchik/node-mole-rpc-transport-mqtt/issues"
+        "url": "https://github.com/koorchik/node-mole-rpc-transport-ws/issues"
     },
-    "homepage": "https://github.com/koorchik/node-mole-rpc-transport-mqtt#readme"
+    "homepage": "https://github.com/koorchik/node-mole-rpc-transport-ws#readme"
 }
