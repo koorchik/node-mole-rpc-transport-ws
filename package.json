@@ -1,0 +1,42 @@
+{
+    "name": "mole-rpc-transport-ws",
+    "version": "0.3.0",
+    "description": "WebSocket transport for Mole-RPC (JSON RPC library)",
+    "main": "index.js",
+    "scripts": {
+        "test": "node ./tests/autotests-ws.js && node ./tests/autotests-ws-inverted.js && node ./tests/autotests-wss.js || exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/koorchik/node-mole-rpc-transport-mqtt.git"
+    },
+    "peerDependencies": {
+        "mole-rpc": "^0.3.0"
+    },
+    "devDependencies": {
+        "mole-rpc": "^0.3.0",
+        "ws": "^6.1.2"
+    },
+    "keywords": [
+        "jsonrpc",
+        "json-rpc",
+        "json",
+        "jsonrpc-2.0",
+        "rpc",
+        "http",
+        "tcp",
+        "websocket",
+        "ws",
+        "api",
+        "mole-rpc",
+        "mole",
+        "transport",
+        "mole-transport"
+    ],
+    "author": "koorchik",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/koorchik/node-mole-rpc-transport-mqtt/issues"
+    },
+    "homepage": "https://github.com/koorchik/node-mole-rpc-transport-mqtt#readme"
+}
