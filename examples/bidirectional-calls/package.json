@@ -1,0 +1,16 @@
+{
+  "name": "client-connects-to-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "client.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mole-rpc": "^0.3.2",
+    "ws": "^6.1.3"
+  }
+}
