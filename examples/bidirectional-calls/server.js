@@ -12,14 +12,12 @@ const WSS_PORT = 12345;
 async function main() {
     const wss = new WebSocket.Server({ port: WSS_PORT });
 
-    wss.on('connection', async ws => {
-        const server = new MoleServer({
-            requestTimeout: 1000,
-            transports: [new TransportServerWS({ ws })]
-        });
+    const server = new MoleServer({ transports: [] });
+    server.expose({ sum, multiply });
+    await server.run();
 
-        server.expose({ sum, multiply });
-        await server.run();
+    wss.on('connection', async ws => {
+        server.registerTransport(new TransportServerWS({ ws }));
 
         const client = new MoleClient({
             requestTimeout: 1000,
@@ -29,20 +27,6 @@ async function main() {
         console.log(await client.divide(2, 3));
         console.log(await client.substract(2, 3));
     });
-
-    function prepareTransports() {
-        return [
-            new TransportServerWSS({
-                wss: new WebSocket.Server({
-                    port: WSS_PORT
-                })
-            })
-        ];
-    }
-}
-
-async function prepareTransport(ws) {
-    return new TransportClientWS({ ws });
 }
 
 main().then(console.log, console.error);
