@@ -5,7 +5,7 @@ const WebSocket = require('ws');
 
 const TransportClientWS = require('../../TransportClientWS');
 const TransportServerWS = require('../../TransportServerWS');
-const { sum, multiply } = require('../utils');
+const { sum, multiply } = require('../expose');
 
 const WSS_PORT = 12345;
 
@@ -17,11 +17,11 @@ async function main() {
     await server.run();
 
     wss.on('connection', async ws => {
-        server.registerTransport(new TransportServerWS({ ws }));
+        server.registerTransport(new TransportServerWS({ wsBuilder: () => ws }));
 
         const client = new MoleClient({
             requestTimeout: 1000,
-            transport: new TransportClientWS({ ws })
+            transport: new TransportClientWS({ wsBuilder: () => ws })
         });
 
         console.log(await client.divide(2, 3));

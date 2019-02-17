@@ -2,7 +2,7 @@ const MoleServer = require('mole-rpc/MoleServer');
 const WebSocket = require('ws');
 
 const TransportServerWSS = require('../../TransportServerWSS');
-const { sum, multiply } = require('../utils');
+const { sum, multiply } = require('../expose');
 
 const WSS_PORT = 12345;
 

@@ -12,6 +12,10 @@ class TransportServerWS {
 
                 ws.send(resData);
             });
+
+            ws.on('close', () => {
+                ws.terminate();
+            });
         });
     }
 }

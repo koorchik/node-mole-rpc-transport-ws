@@ -6,12 +6,13 @@ const WebSocket = require('ws');
 const TransportClientWS = require('../../TransportClientWS');
 const TransportServerWS = require('../../TransportServerWS');
 
-const { waitForEvent, sleep, substract, divide } = require('../utils');
+const { waitForEvent, sleep } = require('../utils');
+const { substract, divide } = require('../expose');
 
 const WSS_PORT = 12345;
 
 async function main() {
-    const ws = await prepareWSConnection();
+    const ws = new WebSocket(`ws://localhost:${WSS_PORT}`);
 
     // Client
     const client = new MoleClient({
@@ -26,19 +27,6 @@ async function main() {
 
     console.log(await client.sum(2, 3));
     console.log(await client.multiply(2, 3));
-}
-
-async function prepareWSConnection() {
-    while (true) {
-        try {
-            const ws = new WebSocket(`ws://localhost:${WSS_PORT}`);
-            await waitForEvent(ws, 'open');
-
-            return ws;
-        } catch (error) {
-            await sleep(100);
-        }
-    }
 }
 
 main().then(console.log, console.error);

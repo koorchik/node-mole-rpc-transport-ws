@@ -2,31 +2,31 @@ const MoleClient = require('mole-rpc/MoleClientProxified');
 const WebSocket = require('ws');
 
 const TransportClientWS = require('../../TransportClientWS');
-const { waitForEvent, sleep } = require('../utils');
+const { sleep } = require('../../utils');
 
 const WSS_PORT = 12345;
 
 async function main() {
     const client = new MoleClient({
         requestTimeout: 1000,
-        transport: await prepareTransport()
+        transport: prepareTransport()
     });
 
-    console.log(await client.sum(2, 3));
-    console.log(await client.multiply(2, 3));
-}
-
-async function prepareTransport() {
     while (true) {
         try {
-            const ws = new WebSocket(`ws://localhost:${WSS_PORT}`);
-            await waitForEvent(ws, 'open');
-
-            return new TransportClientWS({ ws });
+            console.log(await client.sum(2, 3));
+            console.log(await client.multiply(2, 3));
         } catch (error) {
-            await sleep(100);
+            console.log('ERROR', error);
         }
+        await sleep(2000);
     }
+}
+
+function prepareTransport() {
+    return new TransportClientWS({
+        wsBuilder: () => new WebSocket(`ws://localhost:${WSS_PORT}`)
+    });
 }
 
 main().then(console.log, console.error);
