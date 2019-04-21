@@ -23,14 +23,10 @@ async function main() {
 }
 
 async function prepareServer() {
-    const ws1 = new WebSocket(`ws://localhost:${WSS_PORT}`);
-    await waitForEvent(ws1, 'open');
-
-    const ws2 = new WebSocket(`ws://localhost:${WSS_PORT}`);
-    await waitForEvent(ws2, 'open');
+    const wsBuilder = new WebSocket(`ws://localhost:${WSS_PORT}`);
 
     return new MoleServer({
-        transports: [new TransportServerWS({ ws: ws1 }), new TransportServerWS({ ws: ws2 })]
+        transports: [new TransportServerWS({ wsBuilder }), new TransportServerWS({ wsBuilder })]
     });
 }
 
@@ -45,14 +41,14 @@ async function prepareClients() {
     const simpleClient = new MoleClient({
         requestTimeout: 1000, // autotester expects this value
         transport: new TransportClientWS({
-            ws: ws1
+            wsBuilder: () => ws1
         })
     });
 
     const proxifiedClient = new MoleClientProxified({
         requestTimeout: 1000, // autotester expects this value
         transport: new TransportClientWS({
-            ws: ws2
+            wsBuilder: () => ws2
         })
     });
 

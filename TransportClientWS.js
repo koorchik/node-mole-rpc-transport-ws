@@ -14,22 +14,20 @@ class TransportClientWS {
 
     async sendData(data) {
         const ws = await this._getWs();
-        console.log('sendData', ws.readyState, data);
-
         return ws.send(data);
     }
 
     async _prepareWs() {
         const ws = this.wsBuilder();
-        console.log('_prepareWs', ws.readyState);
+
         if (ws.readyState === readyState.CONNECTING) {
             await utils.waitForEvent(ws, 'open');
         }
 
-        ws.on('message', data => {
-            console.log('Get data', data);
-            this.callback(data);
+        ws.addEventListener('message', message => {
+            this.callback(message.data);
         });
+
         return ws;
     }
 

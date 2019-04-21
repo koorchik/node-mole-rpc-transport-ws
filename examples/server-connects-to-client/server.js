@@ -2,8 +2,8 @@ const MoleServer = require('mole-rpc/MoleServer');
 const WebSocket = require('ws');
 
 const TransportServerWS = require('../../TransportServerWS');
-const { sum, multiply } = require('../expose');
-const { sleep } = require('../utils');
+const { sum, multiply } = require('../mathFunctions');
+const { sleep } = require('../../utils');
 
 const WSS_PORT = 12345;
 
@@ -14,6 +14,7 @@ async function main() {
     await server.run();
 
     // you can connect to other client with the same server
+    // in this example we introduce this server twice to our remote client
     await server.registerTransport(prepareTransport());
     await server.registerTransport(prepareTransport());
 }

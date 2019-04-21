@@ -2,7 +2,15 @@
 
 WebSocket transport for Mole-RPC (JSON RPC library)
 
-It can work in different modes:
+Works both in browser and on server
+
+Moreover, it can work in different modes:
+
+### Connect from browser to server.
+
+It is the most simple scenario.
+
+See [examples/browser-connects-to-server](./examples/browser-connects-to-server/)
 
 ### Connect from client to server.
 

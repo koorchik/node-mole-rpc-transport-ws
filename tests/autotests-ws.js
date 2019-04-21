@@ -32,42 +32,30 @@ async function prepareServer() {
     });
 
     wss.on('connection', ws => {
-        server.registerTransport(new TransportServerWS({ ws }));
+        server.registerTransport(
+            new TransportServerWS({
+                wsBuilder: () => ws
+            })
+        );
     });
 
     return server;
 }
 
 async function prepareClients() {
-    const ws1 = new WebSocket(`ws://localhost:${WSS_PORT}`);
-    await waitForEvent(ws1, 'open');
-
-    const ws2 = new WebSocket(`ws://localhost:${WSS_PORT}`);
-    await waitForEvent(ws2, 'open');
+    const wsBuilder = () => new WebSocket(`ws://localhost:${WSS_PORT}`);
 
     const simpleClient = new MoleClient({
         requestTimeout: 1000, // autotester expects this value
-        transport: new TransportClientWS({
-            ws: ws1
-        })
+        transport: new TransportClientWS({ wsBuilder })
     });
 
     const proxifiedClient = new MoleClientProxified({
         requestTimeout: 1000, // autotester expects this value
-        transport: new TransportClientWS({
-            ws: ws2
-        })
+        transport: new TransportClientWS({ wsBuilder })
     });
 
     return { simpleClient, proxifiedClient };
-}
-
-function waitForEvent(emitter, eventName) {
-    return new Promise((resolve, reject) => {
-        emitter.on(eventName, (...args) => {
-            resolve(args);
-        });
-    });
 }
 
 main().then(() => {

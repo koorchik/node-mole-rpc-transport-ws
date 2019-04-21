@@ -6,22 +6,27 @@ const WebSocket = require('ws');
 const TransportClientWS = require('../../TransportClientWS');
 const TransportServerWS = require('../../TransportServerWS');
 
-const { waitForEvent, sleep } = require('../utils');
-const { substract, divide } = require('../expose');
+const { substract, divide } = require('../mathFunctions');
 
 const WSS_PORT = 12345;
 
 async function main() {
-    const ws = new WebSocket(`ws://localhost:${WSS_PORT}`);
+    let ws;
 
     // Client
     const client = new MoleClient({
         requestTimeout: 1000,
-        transport: new TransportClientWS({ ws })
+        transport: new TransportClientWS({
+            wsBuilder: () => {
+                // create new connection and share it with server
+                ws = new WebSocket(`ws://localhost:${WSS_PORT}`);
+                return ws;
+            }
+        })
     });
 
     // Server
-    const server = new MoleServer({ transports: [new TransportServerWS({ ws })] });
+    const server = new MoleServer({ transports: [new TransportServerWS({ wsBuilder: () => ws })] });
     server.expose({ substract, divide });
     await server.run();
 
