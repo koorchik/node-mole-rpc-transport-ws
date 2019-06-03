@@ -9,7 +9,9 @@ class TransportClientWS {
     }
 
     async onData(callback) {
-        this.callback = callback;
+        this.callback = (message) => {
+            callback(message.data)
+        };
     }
 
     async sendData(data) {
@@ -20,13 +22,13 @@ class TransportClientWS {
     async _prepareWs() {
         const ws = this.wsBuilder();
 
+        ws.removeEventListener('message', this.callback)
+
         if (ws.readyState === readyState.CONNECTING) {
             await utils.waitForEvent(ws, 'open');
         }
 
-        ws.addEventListener('message', message => {
-            this.callback(message.data);
-        });
+        ws.addEventListener('message', this.callback);
 
         return ws;
     }
