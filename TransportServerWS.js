@@ -37,11 +37,11 @@ class TransportServerWS {
     async _prepareWs() {
         const ws = this.wsBuilder();
 
+        ws.removeEventListener('message', this._onMessageHandler)
+
         if (ws.readyState === readyState.CONNECTING) {
             await waitForEvent(ws, 'open');
         }
-
-        ws.removeEventListener('message', this._onMessageHandler)
 
         this._onMessageHandler = async message => {
             const reqData = message.data;
