@@ -50,7 +50,7 @@ class TransportClientWS {
                 }
 
                 this._isAlive = false;
-                ws.ping();
+                if(ws.readyState === readyState.OPEN) ws.ping();
             }, 15000);
 
             ws.addEventListener('pong', this._onPongHandler);
