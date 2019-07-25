@@ -4,7 +4,7 @@
     "description": "WebSocket transport for Mole-RPC (JSON RPC library)",
     "main": "index.js",
     "scripts": {
-        "test": "node ./tests/autotests-ws.js && node ./tests/autotests-ws-inverted.js && node ./tests/autotests-wss.js || exit 1"
+        "test": "node ./tests/autotests-ws.js && node ./tests/autotests-wss.js || exit 1"
     },
     "repository": {
         "type": "git",

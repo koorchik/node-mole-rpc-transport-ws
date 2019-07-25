@@ -34,7 +34,8 @@ async function prepareServer() {
     wss.on('connection', ws => {
         server.registerTransport(
             new TransportServerWS({
-                wsBuilder: () => ws
+                wsBuilder: () => ws,
+                ping: true
             })
         );
     });
@@ -47,12 +48,12 @@ async function prepareClients() {
 
     const simpleClient = new MoleClient({
         requestTimeout: 1000, // autotester expects this value
-        transport: new TransportClientWS({ wsBuilder })
+        transport: new TransportClientWS({ wsBuilder, ping: true })
     });
 
     const proxifiedClient = new MoleClientProxified({
         requestTimeout: 1000, // autotester expects this value
-        transport: new TransportClientWS({ wsBuilder })
+        transport: new TransportClientWS({ wsBuilder, ping: true })
     });
 
     return { simpleClient, proxifiedClient };

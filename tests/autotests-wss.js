@@ -43,14 +43,16 @@ async function prepareClients() {
     const simpleClient = new MoleClient({
         requestTimeout: 1000, // autotester expects this value
         transport: new TransportClientWS({
-            wsBuilder
+            wsBuilder,
+            ping: true
         })
     });
 
     const proxifiedClient = new MoleClientProxified({
         requestTimeout: 1000, // autotester expects this value
         transport: new TransportClientWS({
-            wsBuilder
+            wsBuilder,
+            ping: true
         })
     });
 

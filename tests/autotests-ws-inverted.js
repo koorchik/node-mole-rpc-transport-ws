@@ -23,7 +23,7 @@ async function main() {
 }
 
 async function prepareServer() {
-    const wsBuilder = new WebSocket(`ws://localhost:${WSS_PORT}`);
+    const wsBuilder = () => new WebSocket(`ws://localhost:${WSS_PORT}`);
 
     return new MoleServer({
         transports: [new TransportServerWS({ wsBuilder }), new TransportServerWS({ wsBuilder })]

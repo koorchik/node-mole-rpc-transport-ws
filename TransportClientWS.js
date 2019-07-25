@@ -2,13 +2,15 @@ const readyState = require('./readyState');
 const utils = require('./utils');
 
 class TransportClientWS {
-    constructor({ wsBuilder } = {}, opts = {}) {
+    constructor({ wsBuilder, ping, pingInterval = 10000 } = {}) {
         if (!wsBuilder) throw new Error('"wsBuilder" required');
         this.wsBuilder = wsBuilder;
         this.ws = null;
         this.callback = null
-        this.opts = opts;
-        if(opts.ping) {
+        this.isPingEnabled = ping;
+        this.pingInterval = pingInterval;
+
+        if (this.isPingEnabled) {
             this._timerId = null;
             this._isAlive = true;
             this._onPongHandler = () => {
@@ -37,7 +39,7 @@ class TransportClientWS {
             await utils.waitForEvent(ws, 'open');
         }
 
-        if(this.opts.ping && ws.ping) {
+        if  (this.isPingEnabled && ws.ping) {
             ws.removeEventListener('pong', this._onPongHandler)
             clearInterval(this._timerId);
             this._isAlive = true;
@@ -51,7 +53,7 @@ class TransportClientWS {
 
                 this._isAlive = false;
                 if(ws.readyState === readyState.OPEN) ws.ping();
-            }, 15000);
+            }, this.pingInterval);
 
             ws.addEventListener('pong', this._onPongHandler);
         }
