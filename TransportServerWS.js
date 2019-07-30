@@ -9,6 +9,7 @@ class TransportServerWS {
         this.callback = null;
         this._onMessageHandler = null;
         this.opts = opts;
+        this.isTerminated = false;
         if(opts.ping) {
             this._timerId = null;
             this._isAlive = true;
@@ -31,6 +32,9 @@ class TransportServerWS {
                 }
             } catch (error) {}
             await sleep(1000);
+            if (this.isTerminated) {
+                return;
+            }
         }
     }
 
@@ -74,6 +78,10 @@ class TransportServerWS {
         ws.addEventListener('message', this._onMessageHandler);
 
         return ws;
+    }
+
+    terminate(){
+        this.isTerminated = true;
     }
 }
 
