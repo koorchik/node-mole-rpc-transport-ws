@@ -8,20 +8,15 @@ class TransportServerWS {
         this.ws = null;
         this.callback = null;
         this._onMessageHandler = null;
-<<<<<<< HEAD
         this.isPingEnabled = ping;
         this.pingInterval = pingInterval;
 
         if (this.isPingEnabled) {
-=======
-        this.opts = opts;
-        this.isTerminated = false;
-        if(opts.ping) {
->>>>>>> ping_pong
             this._timerId = null;
             this._isAlive = true;
             this._onPongHandler = () => {
                 this._isAlive = true;
+                
             }
         }
     }
