@@ -8,10 +8,16 @@ class TransportServerWS {
         this.ws = null;
         this.callback = null;
         this._onMessageHandler = null;
+<<<<<<< HEAD
         this.isPingEnabled = ping;
         this.pingInterval = pingInterval;
 
         if (this.isPingEnabled) {
+=======
+        this.opts = opts;
+        this.isTerminated = false;
+        if(opts.ping) {
+>>>>>>> ping_pong
             this._timerId = null;
             this._isAlive = true;
             this._onPongHandler = () => {
@@ -33,6 +39,9 @@ class TransportServerWS {
                 }
             } catch (error) {}
             await sleep(1000);
+            if (this.isTerminated) {
+                return;
+            }
         }
     }
 
@@ -76,6 +85,10 @@ class TransportServerWS {
         ws.addEventListener('message', this._onMessageHandler);
 
         return ws;
+    }
+
+    terminate(){
+        this.isTerminated = true;
     }
 }
 
