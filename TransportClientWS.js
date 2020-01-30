@@ -26,8 +26,11 @@ class TransportClientWS {
     }
 
     async sendData(data) {
-        const ws = await this._getWs();
-        return ws.send(data);
+        try{
+            const ws = await this._getWs();
+            return ws.send(data);
+
+        } catch(_){ }
     }
 
     async _prepareWs() {
