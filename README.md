@@ -1,8 +1,15 @@
 ## WebSocket Transport for Mole RPC (JSON RPC Library)
 
-WebSocket transport for Mole-RPC (JSON RPC library)
+[![npm version](https://badge.fury.io/js/mole-rpc-transport-ws.svg)](https://badge.fury.io/js/mole-rpc-transport-ws)
+[![Build Status](https://travis-ci.org/koorchik/node-mole-rpc-transport-ws.svg?branch=master)](https://travis-ci.org/koorchik/node-mole-rpc-transport-ws)
+[![Known Vulnerabilities](https://snyk.io/test/github/koorchik/node-mole-rpc-transport-ws/badge.svg?targetFile=package.json)](https://snyk.io/test/github/koorchik/node-mole-rpc-transport-ws?targetFile=package.json)
 
-Works both in browser and on server
+
+Mole-RPC is a tiny transport agnostic JSON-RPC 2.0 client and server which can work both in NodeJs, Browser, Electron etc.
+
+This is WebSocket based tranport but there are [many more transports](https://www.npmjs.com/search?q=keywords:mole-transport). 
+
+**This transport Works both in browser and on server**
 
 Moreover, it can work in different modes:
 
