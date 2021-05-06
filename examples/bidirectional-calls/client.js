@@ -17,16 +17,20 @@ async function main() {
     const client = new MoleClient({
         requestTimeout: 1000,
         transport: new TransportClientWS({
+            wsBuilder: () => ws
+        })
+    });
+
+    // Server
+    const server = new MoleServer({
+        transports: [new TransportServerWS({
             wsBuilder: () => {
                 // create new connection and share it with server
                 ws = new WebSocket(`ws://localhost:${WSS_PORT}`);
                 return ws;
             }
-        })
+        })]
     });
-
-    // Server
-    const server = new MoleServer({ transports: [new TransportServerWS({ wsBuilder: () => ws })] });
     server.expose({ substract, divide });
     await server.run();
 

@@ -18,7 +18,14 @@ async function main() {
 
     wss.on('connection', async ws => {
         try {
-            server.registerTransport(new TransportServerWS({ wsBuilder: () => ws }));
+            let transport = new TransportServerWS({ wsBuilder: () => ws });
+
+            // terminate the transport on connection close
+            // if not, server-side wsBuilder(s) get called
+            // periodically after connection is closed
+            ws.on("close", () => transport.terminate());
+
+            server.registerTransport(transport);
 
             const client = new MoleClient({
                 requestTimeout: 1000,
