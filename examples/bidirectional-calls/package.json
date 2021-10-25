@@ -12,6 +12,6 @@
     "license": "ISC",
     "dependencies": {
         "mole-rpc": "1.*",
-        "ws": "^7.2.3"
+        "ws": "^7.4.6"
     }
 }
