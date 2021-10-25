@@ -34,7 +34,7 @@ class TransportClientWS {
     }
 
     async _prepareWs() {
-        const ws = this.wsBuilder();
+        const ws = await this.wsBuilder();
 
         ws.removeEventListener('message', this.callback)
 
