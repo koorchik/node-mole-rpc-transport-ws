@@ -1,85 +1,33 @@
+const WsFactory = require('./WsFactory');
 const { WS_STATES } = require('./constants');
-const { waitForWsOpening } = require('./utils');
 
 class TransportClientWS {
-    constructor({ wsBuilder, ping, pingInterval = 10000 } = {}) {
-        if (!wsBuilder) throw new Error('"wsBuilder" required');
-        this.wsBuilder = wsBuilder;
-        this.ws = null;
-        this.callback = null
-        this.isPingEnabled = ping;
-        this.pingInterval = pingInterval;
+    constructor({ wsBuilder, ping, pingInterval } = {}) {
+        this._wsFactory = new WsFactory({ wsBuilder, ping, pingInterval });
 
-        if (this.isPingEnabled) {
-            this._timerId = null;
-            this._isAlive = true;
-            this._onPongHandler = () => {
-                console.log('RECEIVE PONG CLIENT');
-                this._isAlive = true;
-            }
-        }
+        // Property left public to provide ws object access via [moleClient.transport.ws]
+        this.ws = null;
     }
 
     async onData(callback) {
-        this.callback = (message) => {
-            callback(message.data)
+        const messageHandler = async (data) => {
+            callback(data);
         };
+
+        this._wsFactory.setMessageHandler(messageHandler);
     }
 
     async sendData(data) {
-        try{
-            const ws = await this._getWs();
-            return ws.send(data);
+        try {
+            const isWsClosed = !this.ws || this.ws.readyState !== WS_STATES.OPEN;
 
-        } catch(_){ }
-    }
+            if (isWsClosed) {
+                this.ws = await this._wsFactory.buildWsInstance();
+            }
 
-    async _prepareWs() {
-        const ws = await this.wsBuilder();
-
-        ws.removeEventListener('message', this.callback)
-
-        await waitForWsOpening(ws);
-
-        if  (this.isPingEnabled && ws.ping) {
-            ws.removeEventListener('pong', this._onPongHandler)
-            clearInterval(this._timerId);
-            this._isAlive = true;
-
-            this._timerId = setInterval(() => {
-                if (!this._isAlive) {
-                    ws.terminate();
-
-                    return clearInterval(this._timerId);
-                }
-
-                this._isAlive = false;
-                if(ws.readyState === WS_STATES.OPEN) {
-                    console.log('SEND PING CLIENT');
-                    ws.ping();
-                }
-            }, this.pingInterval);
-
-            ws.addEventListener('pong', this._onPongHandler);
-        }
-
-        console.log({
-            on: ws.on,
-            addEventListener: ws.addEventListener,
-            addListener: ws.addListener
-        });
-
-        ws.addEventListener('message', this.callback);
-
-        return ws;
-    }
-
-    async _getWs() {
-        if (this.ws && this.ws.readyState === WS_STATES.OPEN) {
-            return this.ws;
-        } else {
-            this.ws = await this._prepareWs();
-            return this.ws;
+            return this.ws.send(data);
+        } catch (error) {
+            // Ignore unexpected building errors
         }
     }
 }
