@@ -1,5 +1,5 @@
-const readyState = require('./readyState');
-const utils = require('./utils');
+const { WS_STATES } = require('./constants');
+const { waitForWsOpening } = require('./utils');
 
 class TransportClientWS {
     constructor({ wsBuilder, ping, pingInterval = 10000 } = {}) {
@@ -14,6 +14,7 @@ class TransportClientWS {
             this._timerId = null;
             this._isAlive = true;
             this._onPongHandler = () => {
+                console.log('RECEIVE PONG CLIENT');
                 this._isAlive = true;
             }
         }
@@ -38,9 +39,7 @@ class TransportClientWS {
 
         ws.removeEventListener('message', this.callback)
 
-        if (ws.readyState === readyState.CONNECTING) {
-            await utils.waitForEvent(ws, 'open');
-        }
+        await waitForWsOpening(ws);
 
         if  (this.isPingEnabled && ws.ping) {
             ws.removeEventListener('pong', this._onPongHandler)
@@ -55,11 +54,20 @@ class TransportClientWS {
                 }
 
                 this._isAlive = false;
-                if(ws.readyState === readyState.OPEN) ws.ping();
+                if(ws.readyState === WS_STATES.OPEN) {
+                    console.log('SEND PING CLIENT');
+                    ws.ping();
+                }
             }, this.pingInterval);
 
             ws.addEventListener('pong', this._onPongHandler);
         }
+
+        console.log({
+            on: ws.on,
+            addEventListener: ws.addEventListener,
+            addListener: ws.addListener
+        });
 
         ws.addEventListener('message', this.callback);
 
@@ -67,7 +75,7 @@ class TransportClientWS {
     }
 
     async _getWs() {
-        if (this.ws && this.ws.readyState === readyState.OPEN) {
+        if (this.ws && this.ws.readyState === WS_STATES.OPEN) {
             return this.ws;
         } else {
             this.ws = await this._prepareWs();
