@@ -7,6 +7,8 @@ const AutoTester = require('mole-rpc-autotester');
 const TransportClientWS = require('../TransportClientWS');
 const TransportServerWS = require('../TransportServerWS');
 
+const { waitForEvent } = require('./utils');
+
 const WebSocket = require('ws');
 const WSS_PORT = 12345;
 
@@ -55,14 +57,6 @@ async function prepareClients() {
     });
 
     return { simpleClient, proxifiedClient };
-}
-
-function waitForEvent(emitter, eventName) {
-    return new Promise((resolve, reject) => {
-        emitter.on(eventName, (...args) => {
-            resolve(args);
-        });
-    });
 }
 
 main().then(() => {

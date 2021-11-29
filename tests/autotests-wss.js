@@ -61,14 +61,6 @@ async function prepareClients() {
     return { simpleClient, proxifiedClient };
 }
 
-function waitForEvent(emitter, eventName) {
-    return new Promise((resolve, reject) => {
-        emitter.on(eventName, (...args) => {
-            resolve(args);
-        });
-    });
-}
-
 main().then(() => {
     process.exit();
 }, console.error);
