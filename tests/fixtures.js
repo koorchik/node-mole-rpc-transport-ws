@@ -8,7 +8,7 @@ const { waitForEvent } = require('./utils');
 
 let WSS_PORT = 12345;
 
-function getFreeWsConfig() {
+function getTestWsConfig() {
     const wsPort = WSS_PORT++;
     const wsUrl = `ws://localhost:${wsPort}`;
 
@@ -16,7 +16,7 @@ function getFreeWsConfig() {
 }
 
 async function prepareTransportFixtures({ clientOptions = {}, serverOptions = {} }) {
-    const { wsPort, wsUrl } = getFreeWsConfig();
+    const { wsPort, wsUrl } = getTestWsConfig();
     const websocketServer = new WebSocket.Server({ port: wsPort });
 
     let serverWs = null;
@@ -47,5 +47,6 @@ async function prepareTransportFixtures({ clientOptions = {}, serverOptions = {}
 }
 
 module.exports = {
+    getTestWsConfig,
     prepareTransportFixtures
 };

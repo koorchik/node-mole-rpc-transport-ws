@@ -7,10 +7,11 @@ const AutoTester = require('mole-rpc-autotester');
 const TransportClientWS = require('../TransportClientWS');
 const TransportServerWS = require('../TransportServerWS');
 
-const { waitForEvent } = require('./utils');
-
 const WebSocket = require('ws');
-const WSS_PORT = 12345;
+const { waitForEvent } = require('./utils');
+const { getTestWsConfig } = require('./fixtures');
+
+const { wsPort, wsUrl } = getTestWsConfig();
 
 async function main() {
     console.log(`RUN ${__filename}`);
@@ -27,7 +28,7 @@ async function main() {
 }
 
 async function prepareServer() {
-    const wsBuilder = () => new WebSocket(`ws://localhost:${WSS_PORT}`);
+    const wsBuilder = () => new WebSocket(wsUrl);
 
     return new MoleServer({
         transports: [new TransportServerWS({ wsBuilder }), new TransportServerWS({ wsBuilder })]
@@ -36,7 +37,7 @@ async function prepareServer() {
 
 async function prepareClients() {
     const wss = new WebSocket.Server({
-        port: WSS_PORT
+        port: wsPort
     });
 
     const [ws1] = await waitForEvent(wss, 'connection');
