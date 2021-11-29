@@ -15,12 +15,12 @@
     },
     "peerDependencies": {
         "mole-rpc": "1.*",
-        "ws": "7.*"
+        "ws": "8.*"
     },
     "devDependencies": {
         "mole-rpc": "1.*",
         "mole-rpc-autotester": "1.*",
-        "ws": "7.*"
+        "ws": "8.*"
     },
     "keywords": [
         "jsonrpc",
