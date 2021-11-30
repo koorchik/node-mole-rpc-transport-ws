@@ -1,10 +1,10 @@
 {
     "name": "mole-rpc-transport-ws",
-    "version": "0.5.0",
+    "version": "1.0.0",
     "description": "WebSocket transport for Mole-RPC (JSON RPC library)",
     "main": "index.js",
     "scripts": {
-        "test": "node ./tests/autotests-ws.js && node ./tests/autotests-wss.js || exit 1"
+        "test": "node ./tests/autotests-ws.js && node ./tests/autotests-wss.js && node ./tests/ping-pong.js || exit 1"
     },
     "repository": {
         "type": "git",

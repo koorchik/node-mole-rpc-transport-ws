@@ -1,4 +1,4 @@
-const { prepareTransportFixtures, prepareDuplexTransportFixtures } = require('./fixtures');
+const { prepareTransportFixtures } = require('./fixtures');
 const { test, sleep, assertWsOpened, assertWsClosed, simulateWsConnectionLoss } = require('./utils');
 
 const PING_INTERVAL = 100;
@@ -9,7 +9,6 @@ async function main() {
 
     await test('testWsDoesntHandleConnectionLossWithoutPing', testWsDoesntHandleConnectionLossWithoutPing);
     await test('testPingDoesntBrakeStableConnection', testPingDoesntBrakeStableConnection);
-    await test('testPingDoesntBrakeStableDuplexConnection', testPingDoesntBrakeStableDuplexConnection);
     await test('testPingWorksForTranportClient', testPingWorksForTranportClient);
     await test('testPingWorksForTransportServer', testPingWorksForTransportServer);
     await test('testPingWorksForConcurrentTransports', testPingWorksForConcurrentTransports);
@@ -31,18 +30,6 @@ async function testWsDoesntHandleConnectionLossWithoutPing() {
 
 async function testPingDoesntBrakeStableConnection() {
     const { clientWs, serverWs } = await prepareTransportFixtures({
-        clientOptions: { ping: true, pingInterval: PING_INTERVAL },
-        serverOptions: { ping: true, pingInterval: PING_INTERVAL }
-    });
-
-    await sleep(PING_HANDLING_DELAY);
-
-    assertWsOpened(clientWs);
-    assertWsOpened(serverWs);
-}
-
-async function testPingDoesntBrakeStableDuplexConnection() {
-    const { clientWs, serverWs } = await prepareDuplexTransportFixtures({
         clientOptions: { ping: true, pingInterval: PING_INTERVAL },
         serverOptions: { ping: true, pingInterval: PING_INTERVAL }
     });
