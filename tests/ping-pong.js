@@ -1,4 +1,4 @@
-const { prepareTransportFixtures } = require('./fixtures');
+const { prepareTransportFixtures, prepareDuplexTransportFixtures } = require('./fixtures');
 const { test, sleep, assertWsOpened, assertWsClosed, simulateWsConnectionLoss } = require('./utils');
 
 const PING_INTERVAL = 100;
@@ -7,14 +7,15 @@ const PING_HANDLING_DELAY = 300;
 async function main() {
     console.log(`RUN ${__filename}`);
 
-    await test('sometest', sometest);
-    await test('sometesttwo', sometesttwo);
-    await test('sometestthree', sometestthree);
-    await test('sometestfour', sometestfour);
-    await test('sometestfive', sometestfive);
+    await test('testWsDoesntHandleConnectionLossWithoutPing', testWsDoesntHandleConnectionLossWithoutPing);
+    await test('testPingDoesntBrakeStableConnection', testPingDoesntBrakeStableConnection);
+    await test('testPingDoesntBrakeStableDuplexConnection', testPingDoesntBrakeStableDuplexConnection);
+    await test('testPingWorksForTranportClient', testPingWorksForTranportClient);
+    await test('testPingWorksForTransportServer', testPingWorksForTransportServer);
+    await test('testPingWorksForConcurrentTransports', testPingWorksForConcurrentTransports);
 }
 
-async function sometest() {
+async function testWsDoesntHandleConnectionLossWithoutPing() {
     const { clientWs, serverWs } = await prepareTransportFixtures({
         clientOptions: { ping: false },
         serverOptions: { ping: false }
@@ -28,8 +29,32 @@ async function sometest() {
     assertWsOpened(serverWs);
 }
 
-async function sometesttwo() {
+async function testPingDoesntBrakeStableConnection() {
     const { clientWs, serverWs } = await prepareTransportFixtures({
+        clientOptions: { ping: true, pingInterval: PING_INTERVAL },
+        serverOptions: { ping: true, pingInterval: PING_INTERVAL }
+    });
+
+    await sleep(PING_HANDLING_DELAY);
+
+    assertWsOpened(clientWs);
+    assertWsOpened(serverWs);
+}
+
+async function testPingDoesntBrakeStableDuplexConnection() {
+    const { clientWs, serverWs } = await prepareDuplexTransportFixtures({
+        clientOptions: { ping: true, pingInterval: PING_INTERVAL },
+        serverOptions: { ping: true, pingInterval: PING_INTERVAL }
+    });
+
+    await sleep(PING_HANDLING_DELAY);
+
+    assertWsOpened(clientWs);
+    assertWsOpened(serverWs);
+}
+
+async function testPingWorksForTranportClient() {
+    const { clientWs } = await prepareTransportFixtures({
         clientOptions: { ping: true, pingInterval: PING_INTERVAL },
         serverOptions: { ping: false }
     });
@@ -38,11 +63,10 @@ async function sometesttwo() {
 
     await sleep(PING_HANDLING_DELAY);
 
-    // assertWsClosed(clientWs);
-    assertWsOpened(serverWs);
+    assertWsClosed(clientWs);
 }
 
-async function sometestthree() {
+async function testPingWorksForTransportServer() {
     const { clientWs, serverWs } = await prepareTransportFixtures({
         clientOptions: { ping: false },
         serverOptions: { ping: true, pingInterval: PING_INTERVAL }
@@ -52,12 +76,11 @@ async function sometestthree() {
 
     await sleep(PING_HANDLING_DELAY);
 
-    assertWsOpened(clientWs);
     assertWsClosed(serverWs);
 }
 
-async function sometestfour() {
-    const { clientWs, serverWs, serverTransport } = await prepareTransportFixtures({
+async function testPingWorksForConcurrentTransports() {
+    const { clientWs, serverWs } = await prepareTransportFixtures({
         clientOptions: { ping: true, pingInterval: PING_INTERVAL },
         serverOptions: { ping: true, pingInterval: PING_INTERVAL }
     });
@@ -66,20 +89,8 @@ async function sometestfour() {
 
     await sleep(PING_HANDLING_DELAY);
 
-    // assertWsClosed(clientWs);
+    assertWsClosed(clientWs);
     assertWsClosed(serverWs);
-}
-
-async function sometestfive() {
-    const { clientWs, serverWs } = await prepareTransportFixtures({
-        clientOptions: { ping: true, pingInterval: PING_INTERVAL },
-        serverOptions: { ping: true, pingInterval: PING_INTERVAL }
-    });
-
-    await sleep(PING_HANDLING_DELAY);
-
-    assertWsOpened(clientWs);
-    assertWsOpened(serverWs);
 }
 
 

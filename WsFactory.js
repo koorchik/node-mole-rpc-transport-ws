@@ -79,6 +79,13 @@ class WsFactory {
             return;
         }
 
+        if (ws.pingHandlerAlreadyApplied) {
+            return;
+        }
+
+        // Handle same ws object usage for several transports
+        ws.pingHandlerAlreadyApplied = true;
+
         let isConnectionAlive = false;
 
         this._addEventListenerToWs(ws, 'pong', () => {

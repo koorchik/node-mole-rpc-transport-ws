@@ -37,7 +37,12 @@ function assertWsClosed(ws) {
 }
 
 function simulateWsConnectionLoss(ws) {
-    ws._socket.pause();
+    ws.pause();
+}
+
+function initializeMoleClient(moleClient) {
+    // Mole client is initialized on first call
+    moleClient.callMethod('test', []).catch(() => {});
 }
 
 module.exports = {
@@ -47,5 +52,6 @@ module.exports = {
     sleep,
     assertWsOpened,
     assertWsClosed,
-    simulateWsConnectionLoss
+    simulateWsConnectionLoss,
+    initializeMoleClient
 };
