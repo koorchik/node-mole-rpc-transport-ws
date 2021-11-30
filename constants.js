@@ -1,8 +1,8 @@
 const WS_STATES = {
-    CONNECTING: 0,
-    OPEN: 1,
-    CLOSING: 2,
-    CLOSED: 3
+    CONNECTING : 0,
+    OPEN       : 1,
+    CLOSING    : 2,
+    CLOSED     : 3
 };
 
 const DEFAULT_WS_OPENING_TIMEOUT_MS = 3000;

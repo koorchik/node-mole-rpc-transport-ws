@@ -16,8 +16,8 @@ async function main() {
 
 async function testWsDoesntHandleConnectionLossWithoutPing() {
     const { clientWs, serverWs } = await prepareTransportFixtures({
-        clientOptions: { ping: false },
-        serverOptions: { ping: false }
+        clientOptions : { ping: false },
+        serverOptions : { ping: false }
     });
 
     simulateWsConnectionLoss(clientWs);
@@ -30,8 +30,8 @@ async function testWsDoesntHandleConnectionLossWithoutPing() {
 
 async function testPingDoesntBrakeStableConnection() {
     const { clientWs, serverWs } = await prepareTransportFixtures({
-        clientOptions: { ping: true, pingInterval: PING_INTERVAL },
-        serverOptions: { ping: true, pingInterval: PING_INTERVAL }
+        clientOptions : { ping: true, pingInterval: PING_INTERVAL },
+        serverOptions : { ping: true, pingInterval: PING_INTERVAL }
     });
 
     await sleep(PING_HANDLING_DELAY);
@@ -42,8 +42,8 @@ async function testPingDoesntBrakeStableConnection() {
 
 async function testPingWorksForTranportClient() {
     const { clientWs } = await prepareTransportFixtures({
-        clientOptions: { ping: true, pingInterval: PING_INTERVAL },
-        serverOptions: { ping: false }
+        clientOptions : { ping: true, pingInterval: PING_INTERVAL },
+        serverOptions : { ping: false }
     });
 
     simulateWsConnectionLoss(clientWs);
@@ -55,8 +55,8 @@ async function testPingWorksForTranportClient() {
 
 async function testPingWorksForTransportServer() {
     const { clientWs, serverWs } = await prepareTransportFixtures({
-        clientOptions: { ping: false },
-        serverOptions: { ping: true, pingInterval: PING_INTERVAL }
+        clientOptions : { ping: false },
+        serverOptions : { ping: true, pingInterval: PING_INTERVAL }
     });
 
     simulateWsConnectionLoss(clientWs);
@@ -68,8 +68,8 @@ async function testPingWorksForTransportServer() {
 
 async function testPingWorksForConcurrentTransports() {
     const { clientWs, serverWs } = await prepareTransportFixtures({
-        clientOptions: { ping: true, pingInterval: PING_INTERVAL },
-        serverOptions: { ping: true, pingInterval: PING_INTERVAL }
+        clientOptions : { ping: true, pingInterval: PING_INTERVAL },
+        serverOptions : { ping: true, pingInterval: PING_INTERVAL }
     });
 
     simulateWsConnectionLoss(clientWs);

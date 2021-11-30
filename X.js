@@ -15,9 +15,9 @@ class BaseError extends Error {
 class WsFactoryError extends BaseError {
     static get codes() {
         return {
-            WS_BUILDER_INVALID_OBJECT: () => 'Ws building error: builder returned invalid object',
-            WS_BUILDER_SAME_OBJECT: () => 'Ws building error: builder returned same object',
-            WS_OPENING_ERROR: ({ reason }) => `Ws opening error: ${reason}`
+            WS_BUILDER_INVALID_OBJECT : () => 'Ws building error: builder returned invalid object',
+            WS_BUILDER_SAME_OBJECT    : () => 'Ws building error: builder returned same object',
+            WS_OPENING_ERROR          : ({ reason }) => `Ws opening error: ${reason}`
         };
     }
 }
