@@ -1,11 +1,12 @@
 const MoleClient = require('mole-rpc/MoleClient');
 const MoleServer = require('mole-rpc/MoleServer');
-const TransportClientWS = require('../TransportClientWS');
-const TransportServerWS = require('../TransportServerWS');
 const WebSocket = require('ws');
 
-const { waitForEvent, initializeMoleClient } = require('./utils');
+const TransportClientWS = require('../TransportClientWS');
+const TransportServerWS = require('../TransportServerWS');
+
 const { WS_STATES } = require('../constants');
+const { waitForEvent, initializeMoleClient } = require('./utils');
 
 let WSS_PORT = 12345;
 
