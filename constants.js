@@ -5,7 +5,7 @@ const WS_STATES = {
     CLOSED     : 3
 };
 
-const DEFAULT_WS_OPENING_TIMEOUT_MS = 3000;
+const DEFAULT_WS_OPENING_TIMEOUT_MS = 20000;
 const DEFAULT_PING_INTERVAL_MS = 10000;
 
 module.exports = {
