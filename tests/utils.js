@@ -13,9 +13,9 @@ async function test(label, callback) {
     try {
         await callback();
 
-        console.log(`  ${label}: OK`);
+        console.log(`Test [${label}]: OK`);
     } catch (error) {
-        console.log(`  ${label}: ERROR`, error);
+        console.log(`Test [${label}]: ERROR`, error);
     }
 }
 
