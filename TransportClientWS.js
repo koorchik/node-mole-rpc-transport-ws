@@ -46,7 +46,7 @@ class TransportClientWS {
         }
 
         if  (this.isPingEnabled && ws.ping) {
-            ws.off('pong', this._onPongHandler)
+            ws.off('pong', this._onPongHandler);
             clearInterval(this._timerId);
             this._isAlive = true;
 

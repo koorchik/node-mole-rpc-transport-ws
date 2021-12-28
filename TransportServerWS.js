@@ -56,7 +56,7 @@ class TransportServerWS {
         const ws = WsAdapter.wrapIfRequired(buildedWs);
 
         if (this._onMessageHandler) {
-            ws.off('message', this._onMessageHandler)
+            ws.off('message', this._onMessageHandler);
         }
 
         if (ws.readyState === readyState.CONNECTING) {
