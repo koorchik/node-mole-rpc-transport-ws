@@ -1,10 +1,10 @@
 {
     "name": "mole-rpc-transport-ws",
-    "version": "0.5.0",
+    "version": "1.0.0",
     "description": "WebSocket transport for Mole-RPC (JSON RPC library)",
     "main": "index.js",
     "scripts": {
-        "test": "node ./tests/autotests-ws.js && node ./tests/autotests-wss.js || exit 1"
+        "test": "node ./tests/autotests-ws.js && node ./tests/autotests-wss.js && node ./tests/ping-pong.js || exit 1"
     },
     "repository": {
         "type": "git",
@@ -15,12 +15,12 @@
     },
     "peerDependencies": {
         "mole-rpc": "1.*",
-        "ws": "7.*"
+        "ws": "8.*"
     },
     "devDependencies": {
-        "mole-rpc": "1.*",
+        "mole-rpc": "^1.0.4",
         "mole-rpc-autotester": "1.*",
-        "ws": "7.*"
+        "ws": "8.*"
     },
     "keywords": [
         "jsonrpc",
@@ -43,5 +43,9 @@
     "bugs": {
         "url": "https://github.com/koorchik/node-mole-rpc-transport-ws/issues"
     },
-    "homepage": "https://github.com/koorchik/node-mole-rpc-transport-ws#readme"
+    "homepage": "https://github.com/koorchik/node-mole-rpc-transport-ws#readme",
+    "contributors": [
+        "Vira Khuder <vira.khdr@gmail.com>",
+        "Artem Trush <atrush.main@gmail.com>"
+    ]
 }
