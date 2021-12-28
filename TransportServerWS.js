@@ -13,6 +13,7 @@ class TransportServerWS {
         this.isTerminated = false;
         this.pingInterval = pingInterval;
         this.reconnectInterval = reconnectInterval;
+        this._lastBuildedWs = null;
 
         if (this.isPingEnabled) {
             this._timerId = null;
@@ -29,26 +30,29 @@ class TransportServerWS {
     }
 
     async _run() {
-        while (true) {
+        while (!this.isTerminated) {
             try {
                 if (!this.ws || this.ws.readyState !== readyState.OPEN) {
-                    this.ws = await this._prepareWs();
+                    const buildedWs = await this.wsBuilder();
+
+                    // If builder always returns the same object there is no sense trying to build a new one
+                    if (buildedWs === this._lastBuildedWs) {
+                        this.terminate();
+                        break;
+                    }
+
+                    this._lastBuildedWs = buildedWs;
+                    this.ws = await this._prepareWs(buildedWs);
                 }
             } catch (error) {
                 // Ignore unexpected errors
             }
 
             await sleep(this.reconnectInterval);
-
-            if (this.isTerminated) {
-                return;
-            }
         }
     }
 
-    async _prepareWs() {
-        const buildedWs = await this.wsBuilder();
-
+    async _prepareWs(buildedWs) {
         const ws = WsAdapter.wrapIfRequired(buildedWs);
 
         if (this._onMessageHandler) {

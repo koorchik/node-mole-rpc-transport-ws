@@ -34,9 +34,7 @@ class TransportClientWS {
         }
     }
 
-    async _prepareWs() {
-        const buildedWs = await this.wsBuilder();
-
+    async _prepareWs(buildedWs) {
         const ws = WsAdapter.wrapIfRequired(buildedWs);
 
         if (this.callback) {
@@ -75,7 +73,10 @@ class TransportClientWS {
         if (this.ws && this.ws.readyState === readyState.OPEN) {
             return this.ws;
         } else {
-            this.ws = await this._prepareWs();
+            const buildedWs = await this.wsBuilder();
+
+            this.ws = await this._prepareWs(buildedWs);
+
             return this.ws;
         }
     }

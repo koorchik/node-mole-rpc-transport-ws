@@ -49,6 +49,10 @@ class WsAdapter {
     }
 
     on(eventName, listener) {
+        if (!listener) {
+            return;
+        }
+
         let wrappedListener = null;
 
         switch (eventName) {
@@ -79,6 +83,10 @@ class WsAdapter {
     }
 
     off(eventName, listener) {
+        if (!listener) {
+            return;
+        }
+
         if (!Object.values(SUPPORTED_EVENTS).includes(eventName)) {
             throw new Error(`Event [${eventName}] is not supported`);
         }
