@@ -1,10 +1,10 @@
 function waitForEvent(emitter, eventName) {
     return new Promise((resolve, reject) => {
-        emitter.addEventListener(eventName, (...args) => {
+        emitter.on(eventName, (...args) => {
             resolve(args);
         });
 
-        emitter.addEventListener('error', reject);
+        emitter.on('error', reject);
     });
 }
 

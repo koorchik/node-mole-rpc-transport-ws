@@ -1,8 +1,9 @@
+const WsAdapter = require('./WsAdapter');
 const readyState = require('./readyState');
 const { sleep, waitForEvent } = require('./utils');
 
 class TransportServerWS {
-    constructor({ wsBuilder, ping, pingInterval = 10000 } = {}) {
+    constructor({ wsBuilder, ping, pingInterval = 10000, reconnectInterval = 1000 } = {}) {
         if (!wsBuilder) throw new Error('"wsBuilder" required');
         this.wsBuilder = wsBuilder;
         this.ws = null;
@@ -11,6 +12,7 @@ class TransportServerWS {
         this.isPingEnabled = ping;
         this.isTerminated = false;
         this.pingInterval = pingInterval;
+        this.reconnectInterval = reconnectInterval;
 
         if (this.isPingEnabled) {
             this._timerId = null;
@@ -32,8 +34,12 @@ class TransportServerWS {
                 if (!this.ws || this.ws.readyState !== readyState.OPEN) {
                     this.ws = await this._prepareWs();
                 }
-            } catch (error) {}
-            await sleep(1000);
+            } catch (error) {
+                // Ignore unexpected errors
+            }
+
+            await sleep(this.reconnectInterval);
+
             if (this.isTerminated) {
                 return;
             }
@@ -41,16 +47,19 @@ class TransportServerWS {
     }
 
     async _prepareWs() {
-        const ws = await this.wsBuilder();
+        const buildedWs = await this.wsBuilder();
 
-        ws.removeEventListener('message', this._onMessageHandler)
+        const ws = WsAdapter.wrapIfRequired(buildedWs);
+
+        if (this._onMessageHandler) {
+            ws.off('message', this._onMessageHandler)
+        }
 
         if (ws.readyState === readyState.CONNECTING) {
             await waitForEvent(ws, 'open');
         }
 
-        this._onMessageHandler = async message => {
-            const reqData = message.data;
+        this._onMessageHandler = async reqData => {
             const resData = await this.callback(reqData);
 
             if (!resData) return;
@@ -59,7 +68,7 @@ class TransportServerWS {
         }
 
         if (this.isPingEnabled && ws.ping) {
-            ws.removeEventListener('pong', this._onPongHandler)
+            ws.off('pong', this._onPongHandler)
             clearInterval(this._timerId);
             this._isAlive = true;
 
@@ -74,10 +83,10 @@ class TransportServerWS {
                 if(ws.readyState === readyState.OPEN) ws.ping();
             }, this.pingInterval);
 
-            ws.addEventListener('pong', this._onPongHandler);
+            ws.on('pong', this._onPongHandler);
         }
 
-        ws.addEventListener('message', this._onMessageHandler);
+        ws.on('message', this._onMessageHandler);
 
         return ws;
     }
