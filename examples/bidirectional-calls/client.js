@@ -11,22 +11,16 @@ const { substract, divide } = require('../mathFunctions');
 const WSS_PORT = 12345;
 
 async function main() {
-    let ws;
+    const ws = new WebSocket(`ws://localhost:${WSS_PORT}`);
 
     // Client
     const client = new MoleClient({
         requestTimeout: 1000,
-        transport: new TransportClientWS({
-            wsBuilder: () => {
-                // create new connection and share it with server
-                ws = new WebSocket(`ws://localhost:${WSS_PORT}`);
-                return ws;
-            }
-        })
+        transport: new TransportClientWS({ wsBuilder: () => ws })
     });
 
     // Server
-    const server = new MoleServer({ transports: [new TransportServerWS({ wsBuilder: () => ws })] });
+    const server = new MoleServer({ transports: [ new TransportServerWS({ wsBuilder: () => ws }) ] });
     server.expose({ substract, divide });
     await server.run();
 
