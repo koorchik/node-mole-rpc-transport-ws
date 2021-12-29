@@ -1,8 +1,9 @@
+const WsAdapter = require('./WsAdapter');
 const readyState = require('./readyState');
 const { sleep, waitForEvent } = require('./utils');
 
 class TransportServerWS {
-    constructor({ wsBuilder, ping, pingInterval = 10000 } = {}) {
+    constructor({ wsBuilder, ping, pingInterval = 10000, reconnectInterval = 1000 } = {}) {
         if (!wsBuilder) throw new Error('"wsBuilder" required');
         this.wsBuilder = wsBuilder;
         this.ws = null;
@@ -11,6 +12,8 @@ class TransportServerWS {
         this.isPingEnabled = ping;
         this.isTerminated = false;
         this.pingInterval = pingInterval;
+        this.reconnectInterval = reconnectInterval;
+        this._lastBuildedWs = null;
 
         if (this.isPingEnabled) {
             this._timerId = null;
@@ -27,30 +30,40 @@ class TransportServerWS {
     }
 
     async _run() {
-        while (true) {
+        while (!this.isTerminated) {
             try {
                 if (!this.ws || this.ws.readyState !== readyState.OPEN) {
-                    this.ws = await this._prepareWs();
+                    const buildedWs = await this.wsBuilder();
+
+                    // If builder always returns the same object there is no sense trying to build a new one
+                    if (buildedWs === this._lastBuildedWs) {
+                        this.terminate();
+                        break;
+                    }
+
+                    this._lastBuildedWs = buildedWs;
+                    this.ws = await this._prepareWs(buildedWs);
                 }
-            } catch (error) {}
-            await sleep(1000);
-            if (this.isTerminated) {
-                return;
+            } catch (error) {
+                // Ignore unexpected errors
             }
+
+            await sleep(this.reconnectInterval);
         }
     }
 
-    async _prepareWs() {
-        const ws = await this.wsBuilder();
+    async _prepareWs(buildedWs) {
+        const ws = WsAdapter.wrapIfRequired(buildedWs);
 
-        ws.removeEventListener('message', this._onMessageHandler)
+        if (this._onMessageHandler) {
+            ws.off('message', this._onMessageHandler);
+        }
 
         if (ws.readyState === readyState.CONNECTING) {
             await waitForEvent(ws, 'open');
         }
 
-        this._onMessageHandler = async message => {
-            const reqData = message.data;
+        this._onMessageHandler = async reqData => {
             const resData = await this.callback(reqData);
 
             if (!resData) return;
@@ -59,7 +72,7 @@ class TransportServerWS {
         }
 
         if (this.isPingEnabled && ws.ping) {
-            ws.removeEventListener('pong', this._onPongHandler)
+            ws.off('pong', this._onPongHandler)
             clearInterval(this._timerId);
             this._isAlive = true;
 
@@ -74,10 +87,10 @@ class TransportServerWS {
                 if(ws.readyState === readyState.OPEN) ws.ping();
             }, this.pingInterval);
 
-            ws.addEventListener('pong', this._onPongHandler);
+            ws.on('pong', this._onPongHandler);
         }
 
-        ws.addEventListener('message', this._onMessageHandler);
+        ws.on('message', this._onMessageHandler);
 
         return ws;
     }

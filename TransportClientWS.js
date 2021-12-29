@@ -1,3 +1,4 @@
+const WsAdapter = require('./WsAdapter');
 const readyState = require('./readyState');
 const utils = require('./utils');
 
@@ -6,7 +7,7 @@ class TransportClientWS {
         if (!wsBuilder) throw new Error('"wsBuilder" required');
         this.wsBuilder = wsBuilder;
         this.ws = null;
-        this.callback = null
+        this.callback = null;
         this.isPingEnabled = ping;
         this.pingInterval = pingInterval;
 
@@ -20,30 +21,32 @@ class TransportClientWS {
     }
 
     async onData(callback) {
-        this.callback = (message) => {
-            callback(message.data)
-        };
+        this.callback = callback;
     }
 
     async sendData(data) {
-        try{
+        try {
             const ws = await this._getWs();
-            return ws.send(data);
 
-        } catch(_){ }
+            return ws.send(data);
+        } catch (error) {
+            // Ignore unexpected errors
+        }
     }
 
-    async _prepareWs() {
-        const ws = await this.wsBuilder();
+    async _prepareWs(buildedWs) {
+        const ws = WsAdapter.wrapIfRequired(buildedWs);
 
-        ws.removeEventListener('message', this.callback)
+        if (this.callback) {
+            ws.off('message', this.callback);
+        }
 
         if (ws.readyState === readyState.CONNECTING) {
             await utils.waitForEvent(ws, 'open');
         }
 
         if  (this.isPingEnabled && ws.ping) {
-            ws.removeEventListener('pong', this._onPongHandler)
+            ws.off('pong', this._onPongHandler);
             clearInterval(this._timerId);
             this._isAlive = true;
 
@@ -58,10 +61,10 @@ class TransportClientWS {
                 if(ws.readyState === readyState.OPEN) ws.ping();
             }, this.pingInterval);
 
-            ws.addEventListener('pong', this._onPongHandler);
+            ws.on('pong', this._onPongHandler);
         }
 
-        ws.addEventListener('message', this.callback);
+        ws.on('message', this.callback);
 
         return ws;
     }
@@ -70,7 +73,10 @@ class TransportClientWS {
         if (this.ws && this.ws.readyState === readyState.OPEN) {
             return this.ws;
         } else {
-            this.ws = await this._prepareWs();
+            const buildedWs = await this.wsBuilder();
+
+            this.ws = await this._prepareWs(buildedWs);
+
             return this.ws;
         }
     }
