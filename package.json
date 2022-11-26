@@ -1,6 +1,6 @@
 {
     "name": "mole-rpc-transport-ws",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "WebSocket transport for Mole-RPC (JSON RPC library)",
     "main": "index.js",
     "scripts": {
@@ -18,7 +18,7 @@
         "ws": "8.*"
     },
     "devDependencies": {
-        "mole-rpc": "^1.0.4",
+        "mole-rpc": "1.*",
         "mole-rpc-autotester": "1.*",
         "ws": "8.*"
     },
