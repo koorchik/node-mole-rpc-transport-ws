@@ -2,11 +2,11 @@
     "name": "browser-connects-to-server",
     "version": "1.0.0",
     "description": "",
-    "main": "",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "parcel -p 1234 watch index.html"
+        "start": "parcel -p 1234 index.html"
     },
+    "browserslist": "last 2 versions",
     "private": true,
     "author": "",
     "license": "ISC",
@@ -16,6 +16,6 @@
         "ws": "8.*"
     },
     "devDependencies": {
-        "parcel-bundler": "^1.12.5"
+        "parcel": "^2.8.0"
     }
 }
